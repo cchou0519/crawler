@@ -1,72 +1,193 @@
-import requests
-from bs4 import BeautifulSoup
-import re
-import pandas as pd
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import pickle
+import time
 
-
-df = pd.read_csv("pm_list.csv", header=0, usecols=[2, 3])
-# print(df)
-trans_dict = df.set_index('英文').T.to_dict('index')['名稱']
-
-area_dict = {
-    "Kantonian": "關都",
-    "Alolan": "阿羅拉",
-    "Hisuian": "洗翠",
-    "Galarian": "伽勒爾",
-    "Johtonian": "城都",
-    "Unovan": "合眾"
-}
-
-# print(eng)
-
-# _str = "Bulbasaur"
-_str = "Glastrier"
-rep = trans_dict[_str] if _str in trans_dict else _str
-# trantab = str.maketrans(eng, cht)
+# options = webdriver.ChromeOptions()
 #
-# print(_str.translate(trantab))
+# browser = webdriver.Chrome(options=options)
+# browser.get("https://www.google.com")
+# pickle.dump(browser.get_cookies(), open("cookies.pkl", "wb"))
+# breakpoint()
+
+# cookies = pickle.load(open("cookies.pkl", "rb"))
+# print(cookies)
+# breakpoint()
 
 
-res = requests.get('https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_evolution_family')
-# print(res.text)
+class Pokemon_Radar_Instance:
+    def __init__(self, headless=False, wait_timeout=60):
+        # full screen chrome
+        options = webdriver.ChromeOptions()
+        options.add_argument("--start-maximized")
 
-soup = BeautifulSoup(res.text, "html.parser")
+        # enable headless mode
+        if headless:
+            options.add_argument("--headless")
+            options.add_argument("--disable-gpu")
 
-# print(soup.prettify())
-soup_tables = soup.select('table.roundy tbody')
-families = []
+        # local driver
+        driver = webdriver.Chrome(options=options, executable_path='D:\Workspace\python\selenium\webdrivers\chromedriver_win32.exe')
 
-for soup_table in soup_tables:
+        driver.execute_cdp_cmd("Emulation.setGeolocationOverride", {
+            "latitude": 24.154827,
+            "longitude": 120.621834,
+            "accuracy": 100
+        })
+        # connect to remote driver
+        '''
+        driver = webdriver.Remote(
+            command_executor=executor,
+            desired_capabilities=DesiredCapabilities.CHROME,
+            options=options,
+        )
+        '''
+        self.driver = driver
+        self.wait = WebDriverWait(driver, wait_timeout)
+        self.BASE_URL = "https://twpkinfo.com/ipoke.aspx"
 
-    tr_list = soup_table.select('tr')
+    def open_url(self):
+        self.driver.get(self.BASE_URL)
 
-    for tr in tr_list:
-        td_list = tr.select('td')
-        # print("---")
-        family = []
-        for td in td_list:
-            a = td.find_all('a', title=re.compile("\(Pokémon\)"))
-            if len(a) > 0:
-                pokemon_eng = a[0].select("span")[0].text
-                pokemon_cht = trans_dict[pokemon_eng] if pokemon_eng in trans_dict else pokemon_eng
+    def delete_all_cookies(self):
+        self.driver.delete_all_cookies()
 
-                _split = pokemon_cht.split("(")
-                if len(_split) > 1:
-                    print(len(_split), _split)
-                    pm_name = _split[0].strip()
-                    pokemon_cht = trans_dict[pm_name] if pm_name in trans_dict else pm_name
+    def save_cookies(self, cookie_name="cookies.pkl"):
+        pickle.dump(self.driver.get_cookies(), open(cookie_name, "wb"))
 
-                    area_eng = _split[1][:-1]
-                    area = area_dict[area_eng] if area_eng in  area_dict else area_eng
-                    pokemon_cht += "-" + area
-                # print(pokemon)
-                family.append(pokemon_cht)
-        if len(family) > 0:
-            families.append(family)
+    def load_cookies(self, cookie_name="cookies.pkl"):
+        try:
+            cookies = pickle.load(open(cookie_name, "rb"))
+            print(cookies)
+            for cookie in cookies:
+                self.driver.add_cookie(cookie)
+        except:
+            pass
 
-# print(families)
-# print(len(families))
+    def refresh(self):
+        self.driver.refresh()
 
-pd.DataFrame(families).to_csv("family.csv", header=None, index=False, encoding='utf-8-sig')
+    def click_filter_btn(self):
+        filter_btn = self.wait.until(
+            EC.visibility_of_element_located(
+                (By.ID, "filterspan")
+            )
+        )
+        filter_btn.click()
+
+        retry = 3
+        for i in range(retry):
+            print("waiting for high_iv_checkbox")
+            time.sleep(5)
+            try:
+                show_high_iv_checkbox = self.wait.until(
+                    EC.visibility_of_element_located(
+                        (By.ID, "show_high_iv")
+                    )
+                )
+                high_iv_span = self.wait.until(
+                    EC.visibility_of_element_located(
+                        (By.ID, "lang_span_overiv")
+                    )
+                )
+                print(show_high_iv_checkbox.is_selected())
+                if show_high_iv_checkbox.is_selected() is not True:
+                    high_iv_span.click()
+                break
+            except:
+                pass
+
+        for i in range(retry):
+            print("waiting for lang_span_pvp_poke")
+            time.sleep(5)
+            try:
+                show_pvp_poke_checkbox = self.wait.until(
+                    EC.visibility_of_element_located(
+                        (By.ID, "show_pvp_poke")
+                    )
+                )
+                pvp_poke_span = self.wait.until(
+                    EC.visibility_of_element_located(
+                        (By.ID, "lang_span_pvp_poke")
+                    )
+                )
+                print(show_pvp_poke_checkbox.is_selected())
+                if show_pvp_poke_checkbox.is_selected() is True:
+                    pvp_poke_span.click()
+                break
+            except:
+                pass
+
+        for i in range(retry):
+            print("waiting for hidden all pokemon")
+            try:
+                for j in range(1, 9):
+                    self.wait.until(
+                        EC.visibility_of_element_located(
+                            (By.ID, "lang_a_tab" + str(j))
+                        )
+                    ).click()
+
+                    self.wait.until(
+                        EC.visibility_of_element_located(
+                            (By.ID, "no_show_all_" + str(j))
+                        )
+                    ).click()
+                break
+            except:
+                pass
+
+        self.wait.until(
+            EC.visibility_of_element_located(
+                (By.ID, "close2_btn")
+            )
+        ).click()
+
+    def zoom_out(self):
+        for i in range(4):
+            time.sleep(5)
+            self.wait.until(
+                EC.visibility_of_element_located(
+                    (By.XPATH, '//*[@id="map"]/div[2]/div[1]/div[1]/a[2]')
+                )
+            ).click()
+
+    def logout(self):
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".profile-toggle-parent .icon-profile"
+        ).click()
+        self.wait.until(
+            EC.visibility_of_element_located(
+                (By.CSS_SELECTOR, "#dap-open-logout-modal > span")
+            )
+        ).click()
+        self.wait.until(
+            EC.visibility_of_element_located((By.ID, "logout-modal-commit"))
+        ).click()
 
 
+
+    def close(self):
+        self.driver.close()
+
+
+instance = Pokemon_Radar_Instance()
+
+instance.open_url()
+instance.delete_all_cookies()
+instance.load_cookies(cookie_name="cookies3.pkl")
+
+instance.refresh()
+# instance.open_url()
+instance.click_filter_btn()
+instance.zoom_out()
+# instance.save_cookies(cookie_name="cookies3.pkl")
+time.sleep(5)
+instance.refresh()
+
+
+
+
+# instance.save_cookies()
