@@ -74,7 +74,8 @@ class PokemonRadarInstance:
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
         except:
-            pass
+            logging.info("load cookies error!")
+
 
     def refresh(self):
         self.driver.refresh()
