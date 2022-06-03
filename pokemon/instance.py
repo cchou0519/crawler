@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common.action_chains import ActionChains
 import json
 import pickle
 import time
@@ -10,7 +11,7 @@ import logging
 
 
 class PokemonRadarInstance:
-    def __init__(self, executor, headless=False, wait_timeout=10, init_lat=None, init_lon=None):
+    def __init__(self, executor, track_list=[], headless=False, wait_timeout=10, init_lat=None, init_lon=None):
         # full screen chrome
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")
@@ -48,6 +49,7 @@ class PokemonRadarInstance:
         self.driver = driver
         self.wait = WebDriverWait(driver, wait_timeout)
         self.BASE_URL = "https://twpkinfo.com/ipoke.aspx"
+        self.track_list = track_list
 
     def send(self, cmd, params):
         resource = "/session/%s/chromium/send_command_and_get_result" % self.driver.session_id
@@ -68,7 +70,7 @@ class PokemonRadarInstance:
     def load_cookies(self, cookie_name="config/cookies.pkl"):
         try:
             cookies = pickle.load(open(cookie_name, "rb"))
-            print(cookies)
+            # print(cookies)
             for cookie in cookies:
                 self.driver.add_cookie(cookie)
         except:
@@ -152,9 +154,18 @@ class PokemonRadarInstance:
         ).click()
 
     def zoom_out(self):
+        time.sleep(5)
         self.wait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, '//*[@id="map"]/div[2]/div[1]/div[1]/a[2]')
+            )
+        ).click()
+
+    def zoom_in(self):
+        time.sleep(5)
+        self.wait.until(
+            EC.visibility_of_element_located(
+                (By.XPATH, '//*[@id="map"]/div[2]/div[1]/div[1]/a[1]')
             )
         ).click()
 
@@ -171,11 +182,58 @@ class PokemonRadarInstance:
                 pm_element = item.find_element_by_xpath('../../img')
                 pm_img = pm_element.get_attribute("src")
 
+                if len(self.track_list) > 0:
+                    pm_number = pm_img.split('/')[-1].split(".")[0]
+
+                    if pm_number not in self.track_list:
+                        if "_" not in pm_number:
+                            continue
+
                 index = pm_element.find_element_by_xpath('../..').get_attribute("style").split(": ")[-1][:-1]
                 output.append([pm_element, pm_img, index])
         except:
             pass
         return output
+
+    def get_pokemon_info(self, element):
+        # check no leaflet-popup plane
+        # try:
+        #     self.driver.find_element(By.CLASS_NAME, "leaflet-popup-close-button").click()
+        #
+        #     # popup_close_button = self.wait.until(
+        #     #     EC.visibility_of_element_located(
+        #     #         (By.CLASS_NAME, "leaflet-popup-close-button")
+        #     #     )
+        #     # )
+        #     # popup_close_button.click()
+        # except:
+        #     pass
+        try:
+            ActionChains(self.driver).move_to_element(element).perform()
+
+            pokemon_name = self.wait.until(
+                EC.visibility_of_element_located(
+                    (By.XPATH, '//*[@id="map"]/div[1]/div[6]/div/div[1]/div/div/div/span[1]/b')
+                )
+            ).text
+
+            countdown = self.wait.until(
+                EC.visibility_of_element_located(
+                    (By.ID, "countdown")
+                )
+            ).text
+
+            my_copyLocation = self.wait.until(
+                EC.visibility_of_element_located(
+                    (By.ID, "my_copyLocation")
+                )
+            ).text
+        except:
+            return []
+        return [pokemon_name, my_copyLocation, countdown]
+
+    def set_track_list(self, new_list=[]):
+        self.track_list = new_list
 
     def logout(self):
         self.driver.find_element(

@@ -4,11 +4,11 @@ from instance import PokemonRadarInstance
 import requests
 import pytz
 import logging
-import datetime
+import pygsheets
 
+tz = pytz.timezone('Asia/Taipei')
 FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT)
-tz = pytz.timezone('Asia/Taipei')
 
 # options = webdriver.ChromeOptions()
 #
@@ -25,12 +25,42 @@ tz = pytz.timezone('Asia/Taipei')
 # 24.721547,120.891013
 INIT_LAT = os.environ.get('INIT_LAT') if os.environ.get('INIT_LAT') is not None else 24.721547
 INIT_LON = os.environ.get('INIT_LON') if os.environ.get('INIT_LON') is not None else 120.891013
-EXECUTOR = os.environ.get('REMOTE_EXECUTOR') if os.environ.get('REMOTE_EXECUTOR') is not None else "http://localhost:4444/wd/hub"
+EXECUTOR = os.environ.get('REMOTE_EXECUTOR') if os.environ.get(
+    'REMOTE_EXECUTOR') is not None else "http://localhost:4444/wd/hub"
+# LINE_TOKEN = os.environ.get('LINE_TOKEN')
+LINE_TOKEN = os.environ.get('LINE_TOKEN') if os.environ.get('LINE_TOKEN') is not None else ""
+
+
+def get_track_list():
+    gc = pygsheets.authorize(service_account_file='config/google-sheet-key.json')
+
+    survey_url = 'https://docs.google.com/spreadsheets/d/1LBhE66v6AJnsN4PtmdAiM2X6TMyK1yYyrefF0oqlOiU/edit#gid=1745896057'
+    sh = gc.open_by_url(survey_url)
+    wks2 = sh.worksheet_by_title("豪豪的特別條件區")
+    c = wks2.get_as_df([["ID", "4*"]]).astype('str')
+
+    return list(c["ID"].loc[c['4*'].str.contains('X')])
+
+
+def lineNotifyMessage(msg, img_path):
+    headers = {
+        "Authorization": "Bearer " + LINE_TOKEN,
+    }
+    data = {
+        'message': msg
+    }
+
+    image = open(img_path, 'rb')
+    imageFile = {'imageFile': image}
+
+    r = requests.post("https://notify-api.line.me/api/notify", headers=headers, data=data, files=imageFile)
+    return r.status_code
 
 
 os.makedirs("img", exist_ok=True)
+track_list = get_track_list()
 
-instance = PokemonRadarInstance(EXECUTOR, init_lat=INIT_LAT, init_lon=INIT_LON)
+instance = PokemonRadarInstance(EXECUTOR, init_lat=INIT_LAT, init_lon=INIT_LON, track_list=track_list)
 
 instance.open_url()
 
@@ -41,30 +71,72 @@ instance.refresh()
 
 # change filter
 instance.click_filter_btn()
-time.sleep(5)
 
 # change to default area
-for i in range(3):
+for i in range(4):
     instance.zoom_out()
+
+time.sleep(5)
+
+# start find_100 loop!!!
+is_zoom_in = True
+pokemon_buffer = {}
+init_track_time = time.time()
+while True:
+    logging.info("scanning...")
+    this_time = time.time()
+
+    # 每小時去抓一次google sheet
+    if this_time - init_track_time > 60 * 60:
+        track_list = get_track_list()
+        instance.set_track_list(track_list)
+        init_track_time = this_time
+
+    # clean buffer
+    for key in list(pokemon_buffer.keys()):
+        if pokemon_buffer[key]["expire_in"] < this_time:
+            pokemon_buffer.pop(key, None)
+
+    track_list = []
+    instance.set_track_list(track_list)
+
+    # 查找並返回100的列表
+    list_100 = instance.find_100()
     time.sleep(5)
 
-# 查找並返回100的列表
-list_100 = instance.find_100()
-print(list_100)
-
-if len(list_100) > 0:
     for _l in list_100:
         img = requests.get(_l[1])
-        img_name = "img/" + _l[1].split("/")[-1] + ".jpg"
+        img_name = "img/" + _l[1].split("/")[-1]
 
         # 判斷圖片是否存在，不存在則寫入
         if os.path.exists(img_name) is not True:
             with open(img_name, "wb") as file:
                 file.write(img.content)
 
+        pminfo = instance.get_pokemon_info(_l[0])
+        if len(pminfo) > 0:
+            if pminfo[1] in pokemon_buffer:
+                continue
+            remain = pminfo[2]
+            expire_in = int(pminfo[2].replace("大約", "").replace("分鐘(僅供參考)", "").replace("少於", "")) * 60 + \
+                        time.time()
+            pokemon_buffer[pminfo[1]] = {
+                "pokemon": pminfo[0],
+                "expire_in": expire_in,
+                "location": pminfo[1],
+                "remain": "剩餘" + remain
+            }
+
+            # 傳送line通知
+            a = lineNotifyMessage(msg=pminfo[0] + "\n" + pminfo[1] + "\n" + "剩餘" + remain, img_path=img_name)
+
+    if is_zoom_in:
+        is_zoom_in = False
+        instance.zoom_in()
+    else:
+        is_zoom_in = True
+        instance.zoom_out()
+
+    time.sleep(30)
+
 # instance.save_cookies(cookie_name="cookies3.pkl")
-
-
-
-
-# instance.save_cookies()
