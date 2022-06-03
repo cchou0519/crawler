@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: radar-deployment-taipei
+  name: radar-deployment-hc
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: radar-deployment-taipei
+      run: radar-deployment-hc
   template:
     metadata:
       labels:
-        run: radar-deployment-taipei
+        run: radar-deployment-hc
     spec:
       initContainers:
       - name: package-installer
@@ -38,7 +38,7 @@ spec:
           - mountPath: /dev/shm
             name: cache-volume
       - name: web-driver
-        image: python:3.8-alpine
+        image: amancevice/pandas:1.4.2-alpine
         imagePullPolicy: IfNotPresent
         command:
           - /bin/sh
@@ -48,7 +48,7 @@ spec:
                               gcc libc-dev linux-headers postgresql-dev \
                               && apk add libffi-dev
             pip install selenium requests pytz pygsheets
-            cd /tmp/git-download/script
+            cd /tmp/git-download/script/pokemon
             python main.py
         env:
           - name: REMOTE_EXECUTOR
@@ -71,7 +71,7 @@ spec:
         volumeMounts:
           - mountPath: /tmp/git-download
             name: git-download
-          - mountPath: /tmp/git-download/script/pokemon/config/google-key.json
+          - mountPath: /tmp/git-download/script/pokemon/config/google-sheet-key.json
             name: my-google-token
             subPath: google-key.json
       restartPolicy: Always
@@ -88,4 +88,3 @@ spec:
         emptyDir:
           medium: Memory
           sizeLimit: 2048Mi
-
