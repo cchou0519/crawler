@@ -64,7 +64,7 @@ def lineNotifyMessage(msg, img_path=None):
 os.makedirs("img", exist_ok=True)
 track_list = get_track_list()
 
-if EXECUTOR is not "":
+if EXECUTOR != "":
     is_remote = True
 else:
     is_remote = False
