@@ -35,7 +35,7 @@ class PokemonRadarInstance:
                     "longitude": init_lon,
                     "accuracy": 100
                 }
-                self.send("Emulation.setGeolocationOverride", param)
+                self.send(driver, "Emulation.setGeolocationOverride", param)
         else:
             # local driver
             driver = webdriver.Chrome(options=options, executable_path='chromedriver.exe')
@@ -51,11 +51,11 @@ class PokemonRadarInstance:
         self.BASE_URL = "https://twpkinfo.com/ipoke.aspx"
         self.track_list = track_list
 
-    def send(self, cmd, params):
-        resource = "/session/%s/chromium/send_command_and_get_result" % self.driver.session_id
-        url = self.driver.command_executor._url + resource
+    def send(self, driver, cmd, params):
+        resource = "/session/%s/chromium/send_command_and_get_result" % driver.session_id
+        url = driver.command_executor._url + resource
         body = json.dumps({'cmd': cmd, 'params': params})
-        response = self.driver.command_executor._request('POST', url, body)
+        response = driver.command_executor._request('POST', url, body)
         return response.get('value')
 
     def open_url(self):
