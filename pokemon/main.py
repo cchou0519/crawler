@@ -12,18 +12,6 @@ tz = pytz.timezone('Asia/Taipei')
 FORMAT = '%(asctime)s %(levelname)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=FORMAT)
 
-# options = webdriver.ChromeOptions()
-#
-# browser = webdriver.Chrome(options=options)
-# browser.get("https://www.google.com")
-# pickle.dump(browser.get_cookies(), open("cookies.pkl", "wb"))
-# breakpoint()
-
-# cookies = pickle.load(open("cookies.pkl", "rb"))
-# print(cookies)
-# breakpoint()
-
-
 # 24.721547,120.891013
 INIT_LAT = os.environ.get('INIT_LAT') if os.environ.get('INIT_LAT') is not None else 24.721547
 INIT_LON = os.environ.get('INIT_LON') if os.environ.get('INIT_LON') is not None else 120.891013
@@ -62,12 +50,12 @@ def lineNotifyMessage(msg, img_path=None):
 
     return r.status_code
 
-def print_image_base64_encoding(driver, path):
+def save_screenshot(driver, path):
     driver.save_screenshot(path)
-    with open(path, "rb") as img_file:
-        my_string = base64.b64encode(img_file.read())
+    #with open(path, "rb") as img_file:
+    #    my_string = base64.b64encode(img_file.read())
 
-    logging.info("screenshot base64 encoding: \n" + my_string.decode("utf-8"))
+    #logging.info("screenshot base64 encoding: \n" + my_string.decode("utf-8"))
 
 
 os.makedirs("img", exist_ok=True)
@@ -116,8 +104,8 @@ try:
             if pokemon_buffer[key]["expire_in"] < this_time:
                 pokemon_buffer.pop(key, None)
 
-        track_list = []
-        instance.set_track_list(track_list)
+        #track_list = []
+        #instance.set_track_list(track_list)
 
         # 查找並返回100的列表
         list_100 = instance.find_100()
@@ -157,11 +145,10 @@ try:
             is_zoom_in = True
             instance.zoom_out()
             
-        print_image_base64_encoding(instance.driver, "/tmp/%s.png" % str(this_time))
-        time.sleep(10)
+        time.sleep(60)
 except Exception as e:
-    lineNotifyMessage(msg="掛了QQ")
-    logging.info(str(e))
+    save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
+    lineNotifyMessage(msg="掛了QQ", img_path="/tmp/%s.png" % str(this_time))
 
 
 # instance.save_cookies(cookie_name="cookies3.pkl")
