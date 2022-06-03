@@ -11,7 +11,8 @@ import logging
 
 
 class PokemonRadarInstance:
-    def __init__(self, executor, track_list=[], headless=False, wait_timeout=10, init_lat=None, init_lon=None):
+    def __init__(self, executor, is_remote=False, track_list=[], headless=False, wait_timeout=10,
+                 init_lat=None, init_lon=None):
         # full screen chrome
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")
@@ -21,30 +22,29 @@ class PokemonRadarInstance:
             options.add_argument("--headless")
             options.add_argument("--disable-gpu")
 
-        # local driver
-        driver = webdriver.Chrome(options=options, executable_path='chromedriver.exe')
-        if (init_lat is not None) and (init_lon is not None):
-            driver.execute_cdp_cmd("Emulation.setGeolocationOverride", {
-                "latitude": init_lat,
-                "longitude": init_lon,
-                "accuracy": 100
-            })
-
-        # connect to remote driver
-        '''
-        driver = webdriver.Remote(
-            command_executor=executor,
-            desired_capabilities=DesiredCapabilities.CHROME,
-            options=options,
-        )
-        if (init_lat is not None) and (init_lon is not None):
-            param = {
-                "latitude": init_lat,
-                "longitude": init_lon,
-                "accuracy": 100
-            }            
-            self.send("Emulation.setGeolocationOverride", param)
-        # '''
+        if is_remote:
+            # connect to remote driver
+            driver = webdriver.Remote(
+                command_executor=executor,
+                desired_capabilities=DesiredCapabilities.CHROME,
+                options=options,
+            )
+            if (init_lat is not None) and (init_lon is not None):
+                param = {
+                    "latitude": init_lat,
+                    "longitude": init_lon,
+                    "accuracy": 100
+                }
+                self.send("Emulation.setGeolocationOverride", param)
+        else:
+            # local driver
+            driver = webdriver.Chrome(options=options, executable_path='chromedriver.exe')
+            if (init_lat is not None) and (init_lon is not None):
+                driver.execute_cdp_cmd("Emulation.setGeolocationOverride", {
+                    "latitude": init_lat,
+                    "longitude": init_lon,
+                    "accuracy": 100
+                })
 
         self.driver = driver
         self.wait = WebDriverWait(driver, wait_timeout)
