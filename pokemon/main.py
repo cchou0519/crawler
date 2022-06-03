@@ -145,7 +145,7 @@ try:
             is_zoom_in = True
             instance.zoom_out()
             
-        time.sleep(60)
+        time.sleep(30)
 except Exception as e:
     save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
     lineNotifyMessage(msg="掛了QQ", img_path="/tmp/%s.png" % str(this_time))
