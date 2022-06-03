@@ -5,6 +5,8 @@ import requests
 import pytz
 import logging
 import pygsheets
+import base64
+
 
 tz = pytz.timezone('Asia/Taipei')
 FORMAT = '%(asctime)s %(levelname)s: %(message)s'
@@ -59,6 +61,13 @@ def lineNotifyMessage(msg, img_path=None):
         r = requests.post("https://notify-api.line.me/api/notify", headers=headers, data=data)
 
     return r.status_code
+
+def print_image_base64_encoding(driver, path):
+    driver.save_screenshot(path)
+    with open(path, "rb") as img_file:
+        my_string = base64.b64encode(img_file.read())
+
+    logging.info("screenshot base64 encoding: \n" + my_string.decode("utf-8"))
 
 
 os.makedirs("img", exist_ok=True)
@@ -147,8 +156,9 @@ try:
         else:
             is_zoom_in = True
             instance.zoom_out()
-
-        time.sleep(30)
+            
+        print_image_base64_encoding(instance.driver, "/tmp/%s.png" % int(time))
+        time.sleep(10)
 except:
     lineNotifyMessage(msg="掛了QQ")
 
