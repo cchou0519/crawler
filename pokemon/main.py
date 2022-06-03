@@ -157,7 +157,7 @@ try:
             is_zoom_in = True
             instance.zoom_out()
             
-        print_image_base64_encoding(instance.driver, "/tmp/%s.png" % int(time))
+        print_image_base64_encoding(instance.driver, "/tmp/%s.png" % str(this_time))
         time.sleep(10)
 except Exception as e:
     lineNotifyMessage(msg="掛了QQ")
