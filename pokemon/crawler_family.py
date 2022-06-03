@@ -4,7 +4,7 @@ import re
 import pandas as pd
 
 
-df = pd.read_csv("pm_list.csv", header=0, usecols=[2, 3])
+df = pd.read_csv("config/pm_list.csv", header=0, usecols=[2, 3])
 # print(df)
 trans_dict = df.set_index('英文').T.to_dict('index')['名稱']
 
@@ -67,6 +67,6 @@ for soup_table in soup_tables:
 # print(families)
 # print(len(families))
 
-pd.DataFrame(families).to_csv("family.csv", header=None, index=False, encoding='utf-8-sig')
+pd.DataFrame(families).to_csv("config/family.csv", header=None, index=False, encoding='utf-8-sig')
 
 
