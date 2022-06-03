@@ -31,11 +31,12 @@ class PokemonRadarInstance:
             )
             if (init_lat is not None) and (init_lon is not None):
                 param = {
-                    "latitude": init_lat,
-                    "longitude": init_lon,
+                    "latitude": float(init_lat),
+                    "longitude": float(init_lon),
                     "accuracy": 100
                 }
-                self.send(driver, "Emulation.setGeolocationOverride", param)
+                rr = self.send(driver, "Emulation.setGeolocationOverride", param)
+                logging.info(str(rr))
         else:
             # local driver
             driver = webdriver.Chrome(options=options, executable_path='chromedriver.exe')
