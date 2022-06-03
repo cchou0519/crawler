@@ -113,6 +113,7 @@ try:
         # 查找並返回100的列表
         list_100 = instance.find_100()
         time.sleep(5)
+        logging.info(str(list_100))
 
         for _l in list_100:
             img = requests.get(_l[1])
