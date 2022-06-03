@@ -159,7 +159,9 @@ try:
             
         print_image_base64_encoding(instance.driver, "/tmp/%s.png" % int(time))
         time.sleep(10)
-except:
+except Exception as e:
     lineNotifyMessage(msg="掛了QQ")
+    logging.info(str(e))
+
 
 # instance.save_cookies(cookie_name="cookies3.pkl")
