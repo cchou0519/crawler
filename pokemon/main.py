@@ -79,7 +79,7 @@ instance.refresh()
 instance.click_filter_btn()
 
 # change to default area
-for i in range(4):
+for i in range(5):
     instance.zoom_out()
 
 time.sleep(5)
