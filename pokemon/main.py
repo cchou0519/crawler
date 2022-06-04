@@ -125,8 +125,10 @@ try:
             if len(pminfo) > 0:
                 if pminfo[1] in pokemon_buffer:
                     continue
+                if "少於" in pminfo[2]:
+                    continue
                 remain = pminfo[2]
-                expire_in = int(pminfo[2].replace("大約", "").replace("分鐘(僅供參考)", "").replace("少於", "")) * 60 + \
+                expire_in = int(pminfo[2].replace("大約", "").replace("分鐘(僅供參考)", "")) * 60 + \
                             time.time()
                 pokemon_buffer[pminfo[1]] = {
                     "pokemon": pminfo[0],
