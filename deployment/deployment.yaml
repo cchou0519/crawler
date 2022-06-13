@@ -78,9 +78,6 @@ spec:
       volumes:
       - name: git-download
         emptyDir: {}
-      - name: my-cfmp
-        configMap:
-          name: my-cfmp
       - name: my-google-token
         configMap:
           name: my-google-token
