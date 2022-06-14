@@ -21,6 +21,7 @@ spec:
           - -ec
           - |
             apk add git
+            rm -rf /tmp/git-download/script
             git clone $GIT_REPOSITORY /tmp/git-download/script
         env:
         - name: GIT_REPOSITORY
