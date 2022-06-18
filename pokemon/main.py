@@ -163,8 +163,8 @@ try:
             if pokemon_buffer[key]["expire_in"] < this_time:
                 pokemon_buffer.pop(key, None)
 
-        track_list = []
-        instance.set_track_list_100(track_list)
+        #track_list = []
+        #instance.set_track_list_100(track_list)
 
         # 查找並返回100或pvp的列表
         if IS_100:
