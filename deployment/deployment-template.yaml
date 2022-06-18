@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: radar-deployment-<place_name>
+  name: radar-deployment-<place_name_lower>
   labels:
-    version: 0.2
+    version: "0.2"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: radar-deployment-<place_name>
-      version: 0.2
+      run: radar-deployment-<place_name_lower>
+      version: "0.2"
   template:
     metadata:
       labels:
-        run: radar-deployment-<place_name>
-        version: 0.2
+        run: radar-deployment-<place_name_lower>
+        version: "0.2"
     spec:
       initContainers:
       - name: package-installer
@@ -24,6 +24,7 @@ spec:
           - /bin/sh
           - -ec
           - |
+            sed -i 's/dl-cdn.alpinelinux.org\/alpine/alpine.cs.nycu.edu.tw/g' /etc/apk/repositories
             apk add git
             rm -rf /tmp/git-download/script
             git clone $GIT_REPOSITORY /tmp/git-download/script
@@ -49,6 +50,7 @@ spec:
           - /bin/sh
           - -ec
           - |
+            sed -i 's/dl-cdn.alpinelinux.org\/alpine/alpine.cs.nycu.edu.tw/g' /etc/apk/repositories
             apk add --update --no-cache --virtual .tmp-build-deps \
                               gcc libc-dev linux-headers postgresql-dev \
                               && apk add libffi-dev
