@@ -273,7 +273,9 @@ class PokemonRadarInstance:
             # print("---")
             # print("pokemon_other_txt", pokemon_other_txt)
             pokemon_name = pokemon_other_txt[0].split()[-1]
-
+            
+            logging.info("pokemon_other_txt: " + pokemon_other_txt)
+            
             pvp_out_list = []
             if is_pvp:
                 trigger = False
