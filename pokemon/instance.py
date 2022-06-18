@@ -276,10 +276,51 @@ class PokemonRadarInstance:
             # print("pokemon_other_txt", pokemon_other_txt)
             pokemon_name = pokemon_other_txt[0].split()[-1]
             
-            
+            pvp_out_list = []
+            if is_pvp:
+          
+                for i in range(len(pokemon_other_txt)):
+                    if "LV：" in pokemon_other_txt[i]:
+                        start_index = i + 2
+                        break
+                        
+                # 確定開始判斷的行號小於總長，這樣內容才有機會放對戰聯盟等資訊，這樣不是pvp的寶可夢就不會進以下block
+                if start_index < len(pokemon_other_txt) - 1:
+                    # 最後兩行是技能與google map
+                    for i in range(start_index, len(pokemon_other_txt) - 2):
+                        lines_split = pokemon_other_txt[i].split()
+                        if "進化" in lines_split[0]:
+                            pvp_pm_name = lines_split[1].upper()
+                            if pvp_pm_name in self.pm_id_map_json:
+                                pvp_pm_name = self.pm_id_map_json[pvp_pm_name]
+                            pvp_pm_rank = lines_split[2]
+                            pvp_pm_cp = lines_split[3]
+                        else:
+                            pvp_pm_name = pokemon_name
+                            pvp_pm_rank = lines_split[0]
+                            pvp_pm_cp = lines_split[1]
+
+                        if int(pvp_pm_rank) > 1:
+                            continue
+                        
+                        pvp_pm_cp = pvp_pm_cp.split("/")[-1][:-1]
+
+                        if int(pvp_pm_cp) > 1500:
+                            pvp_league = "UL"
+                        else:
+                            pvp_league = "GL"
+
+                        pvp_out_list.append([pvp_pm_name, pvp_league, pvp_pm_rank, pvp_pm_cp])
+                        logging.info(str([pvp_pm_name, pvp_league, pvp_pm_rank, pvp_pm_cp]))
+                    
+                    if len(pvp_out_list) < 1:
+                        return []        
+                    
+            """
             pvp_out_list = []
             if is_pvp:
                 trigger = False
+                check_text_complete = False
                 for lines in pokemon_other_txt:
                     if "技：" in lines:
                         break
@@ -310,8 +351,10 @@ class PokemonRadarInstance:
                         logging.info(str([pvp_pm_name, pvp_league, pvp_pm_rank, pvp_pm_cp]))
                     if "聯盟" in lines:
                         trigger = True
+                
                 if len(pvp_out_list) < 1 and trigger:
                     return []
+            """
         except Exception as e:
             return []
         return [pokemon_name, my_copyLocation, countdown, pvp_out_list]
