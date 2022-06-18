@@ -15,9 +15,19 @@ INIT_LAT = os.environ.get('INIT_LAT') if os.environ.get('INIT_LAT') is not None 
 INIT_LON = os.environ.get('INIT_LON') if os.environ.get('INIT_LON') is not None else 121.772213
 EXECUTOR = os.environ.get('REMOTE_EXECUTOR') if os.environ.get('REMOTE_EXECUTOR') is not None else ""
 LINE_TOKEN = os.environ.get('LINE_TOKEN') if os.environ.get('LINE_TOKEN') is not None else ""
-IS_100 = os.environ.get("IS_100") if os.environ.get('IS_100') is not None else False
-IS_PVP = os.environ.get("IS_PVP") if os.environ.get('IS_PVP') is not None else True
-ZOOM_OUT_TIMES = os.environ.get("ZOOM_OUT_TIMES") if os.environ.get('ZOOM_OUT_TIMES') is not None else 5
+IS_100 = os.environ.get("IS_100") if os.environ.get('IS_100') is not None else "False"
+IS_PVP = os.environ.get("IS_PVP") if os.environ.get('IS_PVP') is not None else "True"
+ZOOM_OUT_TIMES = int(os.environ.get("ZOOM_OUT_TIMES")) if os.environ.get('ZOOM_OUT_TIMES') is not None else 5
+
+if IS_100.lower() == 'true':
+    IS_100 = True
+else: 
+    IS_100 = False
+    
+if IS_PVP.lower() == 'true':
+    IS_PVP = True
+else: 
+    IS_PVP = False
 
 survey_url = 'https://docs.google.com/spreadsheets/d/1LBhE66v6AJnsN4PtmdAiM2X6TMyK1yYyrefF0oqlOiU/edit#gid=1745896057'
 worksheet_name = "豪豪的特別條件區2"
