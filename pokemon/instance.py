@@ -304,6 +304,7 @@ class PokemonRadarInstance:
                             pvp_league = "GL"
 
                         pvp_out_list.append([pvp_pm_name, pvp_league, pvp_pm_rank, pvp_pm_cp])
+                        logging.info(str([pvp_pm_name, pvp_league, pvp_pm_rank, pvp_pm_cp]))
                     if "聯盟" in lines:
                         trigger = True
                 if len(pvp_out_list) < 1 and trigger:
