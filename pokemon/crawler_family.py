@@ -57,7 +57,7 @@ for soup_table in soup_tables:
                     pokemon_cht = trans_dict[pm_name] if pm_name in trans_dict else pm_name
 
                     area_eng = _split[1][:-1]
-                    area = area_dict[area_eng] if area_eng in  area_dict else area_eng
+                    area = area_dict[area_eng] if area_eng in area_dict else area_eng
                     pokemon_cht += "-" + area
                 # print(pokemon)
                 family.append(pokemon_cht)
