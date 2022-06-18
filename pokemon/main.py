@@ -230,6 +230,7 @@ try:
                 if is_in_track_pvp_list:
                     # print(msg)
                     # 傳送line通知
+                    logging.info(str(pokemon_buffer[pminfo[1]]))
                     lineNotifyMessage(msg=msg, img_path=img_name)
 
         if is_zoom_in:
