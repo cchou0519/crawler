@@ -231,8 +231,8 @@ class PokemonRadarInstance:
                     pm_number = pm_img.split('/')[-1].split(".")[0]
 
                     if pm_number not in self.track_list_100:
-                        if pm_number not in self.pm_id_map_json:
-                            print("skip", pm_number)
+                        if pm_number in self.pm_id_map_json:
+                            logging.info("skip " + pm_number)
                             continue
 
                 index = pm_element.find_element_by_xpath('../..').get_attribute("style").split(": ")[-1][:-1]
