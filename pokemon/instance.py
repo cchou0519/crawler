@@ -269,7 +269,7 @@ class PokemonRadarInstance:
                 )
             ).text
             
-            logging.info("pokemon_other_txt: " + str(pokemon_other_txt))
+            # logging.info("pokemon_other_txt: " + str(pokemon_other_txt))
 
             pokemon_other_txt = str(pokemon_other_txt).splitlines()
             # print("---")
