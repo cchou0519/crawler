@@ -41,6 +41,8 @@ def get_id_map_json():
     output = {}
     for (_id, name) in zip(c["ID"], c["名稱"]):
         output[_id] = name
+        output[name] = _id
+
         if "_" in name:
             # 野蠻鱸魚(RED_STRIPED) -> [野蠻鱸魚, RED_STRIPED)]
             tmp = name.split("(")
@@ -186,7 +188,7 @@ try:
             img_name = "img/" + _l[1].split("/")[-1]
 
             # 判斷圖片是否存在，不存在則寫入
-            if os.path.exists(img_name) is not True:
+            if not os.path.exists(img_name):
                 with open(img_name, "wb") as file:
                     file.write(img.content)
 
@@ -229,6 +231,13 @@ try:
 
                 if is_in_track_pvp_list:
                     # print(msg)
+                    img_name = "img/" + id_map_json[pminfo[0]] + ".png"
+                    # 判斷圖片是否存在，不存在則寫入
+                    if not os.path.exists(img_name):
+                        img = requests.get("https://twpkinfo.com/images/poke1/" + id_map_json[pminfo[0]] + ".png")
+                        with open(img_name, "wb") as file:
+                            file.write(img.content)
+                    
                     # 傳送line通知
                     logging.info(str(pokemon_buffer[pminfo[1]]))
                     lineNotifyMessage(msg=msg, img_path=img_name)
