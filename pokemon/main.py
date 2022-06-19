@@ -42,7 +42,7 @@ def get_id_map_json():
     output_2 = {}
     for (_id, name) in zip(c["ID"], c["名稱"]):
         output[_id] = name
-        output[name] = _id
+        output_2[name] = _id
 
         if "_" in name:
             # 野蠻鱸魚(RED_STRIPED) -> [野蠻鱸魚, RED_STRIPED)]
