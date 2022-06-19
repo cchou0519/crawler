@@ -85,10 +85,12 @@ def lineNotifyMessage(msg, img_path=None):
         'message': msg
     }
     if img_path is not None:
-        image = open(img_path, 'rb')
-        imageFile = {'imageFile': image}
-
-        r = requests.post("https://notify-api.line.me/api/notify", headers=headers, data=data, files=imageFile)
+        try:
+            image = open(img_path, 'rb')
+            imageFile = {'imageFile': image}
+            r = requests.post("https://notify-api.line.me/api/notify", headers=headers, data=data, files=imageFile)
+        except:
+            r = requests.post("https://notify-api.line.me/api/notify", headers=headers, data=data)
     else:
         r = requests.post("https://notify-api.line.me/api/notify", headers=headers, data=data)
 
@@ -231,13 +233,19 @@ try:
 
                 if is_in_track_pvp_list:
                     # print(msg)
-                    img_name = "img/" + id_map_json[pminfo[0]] + ".png"
-                    # 判斷圖片是否存在，不存在則寫入
-                    if not os.path.exists(img_name):
-                        img = requests.get("https://twpkinfo.com/images/poke1/" + id_map_json[pminfo[0]] + ".png")
-                        with open(img_name, "wb") as file:
-                            file.write(img.content)
-                    
+                    if pminfo[0] in id_map_json:
+                        img_name = "img/" + id_map_json[pminfo[0]] + ".png"
+                        # 判斷圖片是否存在，不存在則寫入
+                        if not os.path.exists(img_name):
+                            try:
+                                img = requests.get("https://twpkinfo.com/images/poke1/" + id_map_json[pminfo[0]] + ".png")
+                                with open(img_name, "wb") as file:
+                                    file.write(img.content)
+                            except:
+                                lineNotifyMessage(msg="錯誤!!也許連結不存在: https://twpkinfo.com/images/poke1/" + id_map_json[pminfo[0]] + ".png")
+                    else:
+                        lineNotifyMessage(msg="錯誤!!google sheet內沒有存放" + pminfo[0] + "的ID!")
+
                     # 傳送line通知
                     logging.info(str(pokemon_buffer[pminfo[1]]))
                     lineNotifyMessage(msg=msg, img_path=img_name)
