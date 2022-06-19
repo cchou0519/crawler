@@ -39,6 +39,7 @@ def get_id_map_json():
     wks2 = sh.worksheet_by_title(worksheet_name)
     c = wks2.get_as_df(numerize=False).astype('str')[["ID", "名稱"]]
     output = {}
+    output_2 = {}
     for (_id, name) in zip(c["ID"], c["名稱"]):
         output[_id] = name
         output[name] = _id
@@ -54,7 +55,7 @@ def get_id_map_json():
             name2 = tmp[0] + "(" + tmp1 + ")"
 
             output[name2] = [name]
-    return output
+    return output, output_2
 
 
 def get_track_list_100():
@@ -111,7 +112,7 @@ else:
 if IS_PVP:
     track_list_pvp_gl, track_list_pvp_ul = get_track_list_pvp()
 
-id_map_json = get_id_map_json()
+id_map_json, name_to_id_json = get_id_map_json()
 
 if EXECUTOR != "":
     is_remote = True
@@ -150,7 +151,7 @@ try:
         # 每小時去抓一次google sheet
         if this_time - init_track_time > 60 * 60:
 
-            id_map_json = get_id_map_json()
+            id_map_json, name_to_id_json = get_id_map_json()
             instance.set_pm_id_map_json(id_map_json)
 
             if IS_100:
@@ -233,16 +234,16 @@ try:
 
                 if is_in_track_pvp_list:
                     # print(msg)
-                    if pminfo[0] in id_map_json:
-                        img_name = "img/" + id_map_json[pminfo[0]] + ".png"
+                    if pminfo[0] in name_to_id_json:
+                        img_name = "img/" + name_to_id_json[pminfo[0]] + ".png"
                         # 判斷圖片是否存在，不存在則寫入
                         if not os.path.exists(img_name):
                             try:
-                                img = requests.get("https://twpkinfo.com/images/poke1/" + id_map_json[pminfo[0]] + ".png")
+                                img = requests.get("https://twpkinfo.com/images/poke1/" + name_to_id_json[pminfo[0]] + ".png")
                                 with open(img_name, "wb") as file:
                                     file.write(img.content)
                             except:
-                                lineNotifyMessage(msg="錯誤!!也許連結不存在: https://twpkinfo.com/images/poke1/" + id_map_json[pminfo[0]] + ".png")
+                                lineNotifyMessage(msg="錯誤!!也許連結不存在: https://twpkinfo.com/images/poke1/" + name_to_id_json[pminfo[0]] + ".png")
                     else:
                         lineNotifyMessage(msg="錯誤!!google sheet內沒有存放" + pminfo[0] + "的ID!")
 
