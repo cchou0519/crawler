@@ -54,7 +54,7 @@ def get_id_map_json():
             # 野蠻鱸魚(RED)
             name2 = tmp[0] + "(" + tmp1 + ")"
 
-            output[name2] = [name]
+            output[name2] = name
     return output, output_2
 
 
