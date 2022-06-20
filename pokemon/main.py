@@ -19,7 +19,7 @@ IS_100 = os.environ.get("IS_100") if os.environ.get('IS_100') is not None else "
 IS_PVP = os.environ.get("IS_PVP") if os.environ.get('IS_PVP') is not None else "True"
 ZOOM_OUT_TIMES = int(os.environ.get("ZOOM_OUT_TIMES")) if os.environ.get('ZOOM_OUT_TIMES') is not None else 5
 survey_url = os.environ.get("SURVEY_URL") if os.environ.get('SURVEY_URL') is not None else "https://docs.google.com/spreadsheets/d/1LBhE66v6AJnsN4PtmdAiM2X6TMyK1yYyrefF0oqlOiU/"
-worksheet_name = os.environ.get("WORK_SHEET_NAME") if os.environ.get('SURVEY_URL') is not None else "豪豪的特別條件區2"
+worksheet_name = os.environ.get("WORK_SHEET_NAME") if os.environ.get('WORK_SHEET_NAME') is not None else "豪豪的特別條件區2"
 
 if IS_100.lower() == 'true':
     IS_100 = True
