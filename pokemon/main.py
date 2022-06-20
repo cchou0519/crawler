@@ -18,6 +18,8 @@ LINE_TOKEN = os.environ.get('LINE_TOKEN') if os.environ.get('LINE_TOKEN') is not
 IS_100 = os.environ.get("IS_100") if os.environ.get('IS_100') is not None else "False"
 IS_PVP = os.environ.get("IS_PVP") if os.environ.get('IS_PVP') is not None else "True"
 ZOOM_OUT_TIMES = int(os.environ.get("ZOOM_OUT_TIMES")) if os.environ.get('ZOOM_OUT_TIMES') is not None else 5
+survey_url = os.environ.get("SURVEY_URL") if os.environ.get('SURVEY_URL') is not None else "https://docs.google.com/spreadsheets/d/1LBhE66v6AJnsN4PtmdAiM2X6TMyK1yYyrefF0oqlOiU/"
+worksheet_name = os.environ.get("WORK_SHEET_NAME") if os.environ.get('SURVEY_URL') is not None else "豪豪的特別條件區2"
 
 if IS_100.lower() == 'true':
     IS_100 = True
@@ -29,10 +31,7 @@ if IS_PVP.lower() == 'true':
 else: 
     IS_PVP = False
 
-survey_url = 'https://docs.google.com/spreadsheets/d/1LBhE66v6AJnsN4PtmdAiM2X6TMyK1yYyrefF0oqlOiU/edit#gid=1745896057'
-worksheet_name = "豪豪的特別條件區2"
-
-
+    
 def get_id_map_json():
     gc = pygsheets.authorize(service_account_file='config/google-sheet-key.json')
     sh = gc.open_by_url(survey_url)
