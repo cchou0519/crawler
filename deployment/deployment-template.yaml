@@ -85,6 +85,10 @@ spec:
             value: <is_100>
           - name: IS_PVP
             value: <is_pvp>
+          - name: SURVEY_URL
+            value: <survey_url>
+          - name: WORK_SHEET_NAME
+            value: <work_sheet_name>
         volumeMounts:
           - mountPath: /tmp/git-download
             name: git-download
