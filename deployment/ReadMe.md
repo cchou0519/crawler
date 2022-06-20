@@ -7,7 +7,7 @@ python create-deployment-yaml-v2.py --place_name HC --zoom_out_times 4 --is_pvp 
 return 
 "create deployment-hc-pvp.yaml successful"
 
-## deployment
+## deploy yaml
 ```
 kubectl apply -f deployment-hc-pvp.yaml
 ```
