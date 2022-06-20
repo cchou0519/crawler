@@ -1,19 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: radar-deployment-<place_name_lower>
+  name: radar-deployment-<place_name_lower><100_tag><pvp_tag>
   labels:
     version: "0.2"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: radar-deployment-<place_name_lower>
+      run: radar-<place_name_lower>
+      is_pvp: <is_pvp>
+      is_100: <is_100>
       version: "0.2"
   template:
     metadata:
       labels:
-        run: radar-deployment-<place_name_lower>
+        run: radar-<place_name_lower>
+        is_pvp: <is_pvp>
+        is_100: <is_100>
         version: "0.2"
     spec:
       initContainers:
