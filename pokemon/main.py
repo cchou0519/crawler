@@ -148,7 +148,7 @@ try:
         this_time = time.time()
 
         # 每小時去抓一次google sheet
-        if this_time - init_track_time > 60 * 60:
+        if this_time - init_track_time > 10 * 60:
 
             id_map_json, name_to_id_json = get_id_map_json()
             instance.set_pm_id_map_json(id_map_json)
