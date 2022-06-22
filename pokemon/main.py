@@ -186,11 +186,11 @@ try:
 
         time.sleep(5)
         for _l in list_all:
-            img = requests.get(_l[1])
             img_name = "img/" + _l[1].split("/")[-1]
 
             # 判斷圖片是否存在，不存在則寫入
             if not os.path.exists(img_name):
+                img = requests.get(_l[1])
                 with open(img_name, "wb") as file:
                     file.write(img.content)
 
@@ -244,7 +244,7 @@ try:
                             except:
                                 lineNotifyMessage(msg="錯誤!!也許連結不存在: https://twpkinfo.com/images/poke1/" + name_to_id_json[pminfo[0]] + ".png")
                     else:
-                        lineNotifyMessage(msg="錯誤!!google sheet內沒有存放" + pminfo[0] + "的ID!")
+                        lineNotifyMessage(msg="錯誤!!google sheet內沒有存放" + pminfo[0] + "的ID! img_url是: " + str(_l[1]))
 
                     # 傳送line通知
                     logging.info(str(pokemon_buffer[pminfo[1]]))
