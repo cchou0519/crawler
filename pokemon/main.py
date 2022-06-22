@@ -211,9 +211,9 @@ try:
                     "pvp_info": pminfo[3]
                 }
 
-                msg = pminfo[0] + "\n" + \
-                      pminfo[1] + "\n" + \
-                      "剩餘" + remain
+                msg = "\n" + pminfo[0] + \
+                      "\n" + pminfo[1] + \
+                      "\n剩餘" + remain
 
                 is_in_track_pvp_list = False
                 if len(pminfo[3]) > 0:
@@ -229,7 +229,7 @@ try:
                         msg += "\n" + pvp_info[1] + " " + pvp_info[0]
                 else:
                     is_in_track_pvp_list = True
-                    msg += "\n15/15/15"
+                    msg = "\n這隻100!!!" + msg
 
                 if is_in_track_pvp_list:
                     # print(msg)
