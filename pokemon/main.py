@@ -262,5 +262,7 @@ except Exception as e:
     logging.info(str(e))
     save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
     lineNotifyMessage(msg="掛了QQ", img_path="/tmp/%s.png" % str(this_time))
+finally:
+    instance.close()
 
 # instance.save_cookies(cookie_name="cookies3.pkl")
