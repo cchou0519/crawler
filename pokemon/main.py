@@ -183,7 +183,9 @@ try:
         logging.info("list_100:" + str(list_100))
         logging.info("list_pvp:" + str(list_pvp))
         list_all = list_100 + list_pvp
-
+        
+        save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
+        
         time.sleep(5)
         for _l in list_all:
             img_name = "img/" + _l[1].split("/")[-1]
