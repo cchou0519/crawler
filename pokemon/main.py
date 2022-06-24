@@ -186,7 +186,7 @@ try:
         logging.info("list_pvp:" + str(list_pvp))
         list_all = list_100 + list_pvp
         
-        save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
+        # save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
         
         time.sleep(5)
         for _l in list_all:
