@@ -179,8 +179,10 @@ try:
             list_pvp = instance.find_pvp()
         else:
             list_pvp = []
-
+            
+        logging.info("is_100..." + str(IS_100))
         logging.info("list_100:" + str(list_100))
+        logging.info("is_pvp..." + str(IS_PVP))
         logging.info("list_pvp:" + str(list_pvp))
         list_all = list_100 + list_pvp
         
