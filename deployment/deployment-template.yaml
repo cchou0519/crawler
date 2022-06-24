@@ -58,7 +58,7 @@ spec:
             apk add --update --no-cache --virtual .tmp-build-deps \
                               gcc libc-dev linux-headers postgresql-dev \
                               && apk add libffi-dev
-            pip install selenium requests pytz pygsheets
+            pip install selenium==4.2.0 requests pytz pygsheets
             cd /tmp/git-download/script/pokemon
             python main.py
         env:
