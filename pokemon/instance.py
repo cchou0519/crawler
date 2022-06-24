@@ -217,11 +217,13 @@ class PokemonRadarInstance:
     def find_100(self):
         output = []
         try:
+            logging.info("inside find_100 ...")
             list_100 = self.wait.until(
                 EC.visibility_of_all_elements_located(
                     (By.CLASS_NAME, 'poke_divIcon26_iv100_img')
                 )
             )
+            logging.info("success find list_100 ..." + str(list_100))
 
             for item in list_100:
                 pm_element = item.find_element_by_xpath('../../img')
@@ -237,8 +239,8 @@ class PokemonRadarInstance:
 
                 index = pm_element.find_element_by_xpath('../..').get_attribute("style").split(": ")[-1][:-1]
                 output.append([pm_element, pm_img, index])
-        except:
-            pass
+        except Exception as e:
+            logging.info(str(e))
         return output
 
     def get_pokemon_info(self, element, is_pvp=False):
