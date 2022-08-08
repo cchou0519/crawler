@@ -223,7 +223,7 @@ class PokemonRadarInstance:
                     (By.CLASS_NAME, 'poke_divIcon26_iv100_img')
                 )
             )
-            logging.info("success find list_100 ..." + str(list_100))
+            logging.info("success find list_100_len ..." + str(len(list_100)))
 
             for item in list_100:
                 pm_element = item.find_element_by_xpath('../../img')
