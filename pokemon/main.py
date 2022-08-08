@@ -181,9 +181,9 @@ try:
             list_pvp = []
             
         logging.info("is_100..." + str(IS_100))
-        logging.info("list_100:" + str(list_100))
+        logging.info("list_100_len:" + str(len(list_100)))
         logging.info("is_pvp..." + str(IS_PVP))
-        logging.info("list_pvp:" + str(list_pvp))
+        logging.info("list_pvp_len:" + str(len(list_pvp)))
         list_all = list_100 + list_pvp
         
         # save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
