@@ -240,6 +240,8 @@ try:
                         msg = "\n這隻100!!!" + msg
 
                 if is_in_track_pvp_list:
+                    logging.info(msg)
+
                     # print(msg)
                     if pminfo[0] in name_to_id_json:
                         img_name = "img/" + name_to_id_json[pminfo[0]] + ".png"
