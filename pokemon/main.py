@@ -194,6 +194,7 @@ try:
                processing_list_100 = False
             
             _l = list_all[i]
+            img_name = "img/" + _l[1].split("/")[-1]
 
             # 判斷圖片是否存在，不存在則寫入
             if not os.path.exists(img_name):
