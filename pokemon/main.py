@@ -189,8 +189,13 @@ try:
         # save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
         
         time.sleep(5)
-        for _l in list_all:
-            img_name = "img/" + _l[1].split("/")[-1]
+        for i in range(len(list_all)):
+            if i < len(list_100):
+                processing_list_100 = True
+            else:
+                processing_list_100 = False
+
+            _l = list_all[i]
 
             # 判斷圖片是否存在，不存在則寫入
             if not os.path.exists(img_name):
@@ -232,8 +237,9 @@ try:
                         is_in_track_pvp_list = True
                         msg += "\n" + pvp_info[1] + " " + pvp_info[0]
                 else:
-                    is_in_track_pvp_list = True
-                    msg = "\n這隻100!!!" + msg
+                    if processing_list_100:
+                        is_in_track_pvp_list = True
+                        msg = "\n這隻100!!!" + msg
 
                 if is_in_track_pvp_list:
                     # print(msg)
