@@ -187,14 +187,12 @@ try:
         list_all = list_100 + list_pvp
         
         # save_screenshot(instance.driver, "/tmp/%s.png" % str(this_time))
-        
+        processing_list_100 = True
         time.sleep(5)
         for i in range(len(list_all)):
-            if i < len(list_100):
-                processing_list_100 = True
-            else:
-                processing_list_100 = False
-
+            if i >= len(list_100):
+               processing_list_100 = False
+            
             _l = list_all[i]
 
             # 判斷圖片是否存在，不存在則寫入
