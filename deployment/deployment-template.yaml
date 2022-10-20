@@ -28,7 +28,7 @@ spec:
           - /bin/sh
           - -ec
           - |
-            sed -i 's/dl-cdn.alpinelinux.org\/alpine/alpine.cs.nycu.edu.tw/g' /etc/apk/repositories
+            # sed -i 's/dl-cdn.alpinelinux.org\/alpine/alpine.cs.nycu.edu.tw/g' /etc/apk/repositories
             apk add git
             rm -rf /tmp/git-download/script
             git clone $GIT_REPOSITORY /tmp/git-download/script
@@ -54,7 +54,7 @@ spec:
           - /bin/sh
           - -ec
           - |
-            sed -i 's/dl-cdn.alpinelinux.org\/alpine/alpine.cs.nycu.edu.tw/g' /etc/apk/repositories
+            # sed -i 's/dl-cdn.alpinelinux.org\/alpine/alpine.cs.nycu.edu.tw/g' /etc/apk/repositories
             apk add --update --no-cache --virtual .tmp-build-deps \
                               gcc libc-dev linux-headers postgresql-dev \
                               && apk add libffi-dev
