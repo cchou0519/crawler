@@ -141,7 +141,7 @@ class PokemonRadarInstance:
         for i in range(retry):
             logging.info("waiting for hidden all pokemon... retry " + str(i))
             try:
-                for j in range(1, 9):
+                for j in range(1, 10):
                     self.wait.until(
                         EC.visibility_of_element_located(
                             (By.ID, "lang_a_tab" + str(j))
